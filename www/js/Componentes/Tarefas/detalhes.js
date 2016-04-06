@@ -25,6 +25,10 @@ var Detalhes = React.createClass({
       ReactDOM.render(<Main /> , document.getElementById('root'));
     }, false);
   },
+  handleConcluidoChange: function(status){
+    console.log(status);
+    this.setState({concluido: !status});
+  },
   render: function(){
     return (
       <div className="container">
@@ -34,9 +38,7 @@ var Detalhes = React.createClass({
         </div>
         <div className="row">
           <h2> <span> {this.state.data.id} </span> - {this.state.data.descricao} </h2>
-        </div>
-        <div className="row">
-          <ItemConcluido status={this.state.concluido} />
+          <ItemConcluido status={this.state.data.concluido} onConcluidoChange={this.handleConcluidoChange} />
         </div>
       </div>
     );
@@ -44,18 +46,23 @@ var Detalhes = React.createClass({
 });
 
 var ItemConcluido = React.createClass({
+  onConcluidoChange: function(event){
+    console.log(event.target.checked);
+    this.props.onConcluidoChange(event.target.checked);
+  },
   render: function(){
     var status;
     switch (this.props.status) {
       case '1':
-        status = 'V';
+        status = true;
         break;
       default:
-        status = '';
+        status = false;
+        break;
     }
     return (
       <span className="col-xs-2">
-        {status}
+        <input className="btn" type="checkbox" id="concluido" name="concluido" checked={status} onChange={this.onConcluidoChange} />
       </span>
     );
   }

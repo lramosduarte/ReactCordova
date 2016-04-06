@@ -1,3 +1,15 @@
 .cabecalho{
   padding-top: 30px!important;
 }
+input[type=checkbox] {
+  width: 40px;
+  height: 40px;
+}
+input[type=checkbox] + label {
+  color: #ccc;
+  font-style: italic;
+}
+input[type=checkbox]:checked + label {
+  color: #f00;
+  font-style: normal;
+}

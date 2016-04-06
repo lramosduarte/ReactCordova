@@ -65,7 +65,7 @@
 	    return React.createElement(
 	      'div',
 	      null,
-	      React.createElement(BoxTarefas, { url: 'http://10.0.0.105/teste/api/teste', intervalo: 500 })
+	      React.createElement(BoxTarefas, { url: 'http://localhost:57594/api/teste', intervalo: 500 })
 	    );
 	  }
 	});
@@ -29545,7 +29545,8 @@
 	  },
 	  selectElement: function (elemento, index) {
 	    let preIndice = index.indexOf('.$') + 2;
-	    let indice = index.substring(preIndice);
+	    let posIndice = index.indexOf('.', preIndice);
+	    let indice = index.substring(preIndice, posIndice);
 	    this.props.selectElmenet(indice);
 	  },
 	  render: function () {
@@ -29557,13 +29558,13 @@
 	      listaTarefas.map(tarefa => {
 	        return React.createElement(
 	          'li',
-	          { onClick: this.selectElement, className: 'list-group-item-heading', key: tarefa.id },
+	          { className: 'list-group-item-heading', key: tarefa.id },
 	          React.createElement(
 	            'div',
 	            { className: 'list-group-item-text' },
 	            React.createElement(
 	              'span',
-	              { className: 'col-xs-7' },
+	              { className: 'col-xs-7', onClick: this.selectElement },
 	              tarefa.descricao
 	            ),
 	            React.createElement(ItemConcluido, { status: tarefa.concluido }),
@@ -29665,6 +29666,19 @@
 	      }.bind(this)
 	    });
 	  },
+	  loadElementsSelect: function (elemento) {
+	    $.ajax({
+	      type: 'GET',
+	      dataType: 'json',
+	      url: this.props.url,
+	      success: function (data) {
+	        this.setState({ data: data });
+	      }.bind(this),
+	      error: function (xhr, status, err) {
+	        alert('Não foi possivel estabelecer conexão!\n');
+	      }.bind(this)
+	    });
+	  },
 	  handleTarefaSubmit: function (tarefa) {
 	    $.ajax({
 	      url: this.props.url,
@@ -29701,7 +29715,7 @@
 	    ReactDOM.render(React.createElement(Detalhes, { url: url }), document.getElementById('root'));
 	  },
 	  getInitialState: function () {
-	    return { data: [] };
+	    return { data: [], elemento: [] };
 	  },
 	  componentDidMount: function () {
 	    setInterval(this.loadCommentsFromServer, this.props.intervalo);
@@ -29770,6 +29784,10 @@
 	      ReactDOM.render(React.createElement(Main, null), document.getElementById('root'));
 	    }, false);
 	  },
+	  handleConcluidoChange: function (status) {
+	    console.log(status);
+	    this.setState({ concluido: !status });
+	  },
 	  render: function () {
 	    return React.createElement(
 	      'div',
@@ -29801,12 +29819,8 @@
 	          ' - ',
 	          this.state.data.descricao,
 	          ' '
-	        )
-	      ),
-	      React.createElement(
-	        'div',
-	        { className: 'row' },
-	        React.createElement(ItemConcluido, { status: this.state.concluido })
+	        ),
+	        React.createElement(ItemConcluido, { status: this.state.data.concluido, onConcluidoChange: this.handleConcluidoChange })
 	      )
 	    );
 	  }
@@ -29815,19 +29829,24 @@
 	var ItemConcluido = React.createClass({
 	  displayName: 'ItemConcluido',
 
+	  onConcluidoChange: function (event) {
+	    console.log(event.target.checked);
+	    this.props.onConcluidoChange(event.target.checked);
+	  },
 	  render: function () {
 	    var status;
 	    switch (this.props.status) {
 	      case '1':
-	        status = 'V';
+	        status = true;
 	        break;
 	      default:
-	        status = '';
+	        status = false;
+	        break;
 	    }
 	    return React.createElement(
 	      'span',
 	      { className: 'col-xs-2' },
-	      status
+	      React.createElement('input', { className: 'btn', type: 'checkbox', id: 'concluido', name: 'concluido', checked: status, onChange: this.onConcluidoChange })
 	    );
 	  }
 	});

@@ -12,7 +12,8 @@ var ListaTarefas = React.createClass({
   },
   selectElement: function(elemento, index){
     let preIndice = index.indexOf('.$') + 2;
-    let indice = index.substring(preIndice);
+    let posIndice = index.indexOf('.', preIndice);
+    let indice = index.substring(preIndice, posIndice);
     this.props.selectElmenet(indice);
   },
   render: function(){
@@ -22,9 +23,9 @@ var ListaTarefas = React.createClass({
       <ul className="list-group">
         {listaTarefas.map((tarefa) => {
           return (
-            <li onClick={this.selectElement} className="list-group-item-heading" key={tarefa.id}>
+            <li className="list-group-item-heading" key={tarefa.id}>
               <div className="list-group-item-text">
-                <span className="col-xs-7">
+                <span className="col-xs-7" onClick={this.selectElement}>
                   {tarefa.descricao}
                 </span>
                 <ItemConcluido status={tarefa.concluido} />
@@ -108,6 +109,19 @@ var BoxTarefas = React.createClass({
       }.bind(this)
     });
   },
+  loadElementsSelect: function(elemento){
+    $.ajax({
+      type: 'GET',
+      dataType: 'json',
+      url: this.props.url,
+      success: function(data){
+        this.setState({data: data})
+      }.bind(this),
+      error: function(xhr, status, err){
+        alert('Não foi possivel estabelecer conexão!\n');
+      }.bind(this)
+    })
+  },
   handleTarefaSubmit: function(tarefa){
     $.ajax({
       url: this.props.url,
@@ -144,7 +158,7 @@ var BoxTarefas = React.createClass({
     ReactDOM.render(<Detalhes url={url}/>, document.getElementById('root'))
   },
   getInitialState: function(){
-    return {data: []};
+    return {data: [], elemento: []};
   },
   componentDidMount: function() {
     setInterval(this.loadCommentsFromServer, this.props.intervalo);

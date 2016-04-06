@@ -16,7 +16,7 @@ var Main = React.createClass({
   render: function(){
     return (
       <div>
-        <BoxTarefas url="http://10.0.0.105/teste/api/teste" intervalo={500} />
+        <BoxTarefas url="http://localhost:57594/api/teste" intervalo={500} />
       </div>
     );
   }
