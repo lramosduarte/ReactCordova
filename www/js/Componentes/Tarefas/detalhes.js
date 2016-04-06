@@ -21,9 +21,6 @@ var Detalhes = React.createClass({
   },
   componentDidMount: function() {
     this.loadCommentsFromServer();
-    document.addEventListener("backbutton", function(){
-      ReactDOM.render(<Main /> , document.getElementById('root'));
-    }, false);
   },
   handleConcluidoChange: function(status){
     console.log(status);

@@ -12,11 +12,14 @@ var Main = React.createClass({
     document.addEventListener("deviceready", function(){
       alert('Iniciando app!');
     }, false);
+    document.addEventListener("backbutton", function(){
+      ReactDOM.render(<Main /> , document.getElementById('root'));
+    }, false);
   },
   render: function(){
     return (
       <div>
-        <BoxTarefas url="http://localhost:57594/api/teste" intervalo={500} />
+        <BoxTarefas url="http://10.0.0.105/teste/api/teste" intervalo={500} />
       </div>
     );
   }
