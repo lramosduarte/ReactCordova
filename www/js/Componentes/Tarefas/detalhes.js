@@ -4,23 +4,22 @@ var $ = require("jquery");
 
 var Detalhes = React.createClass({
   getInitialState: function(){
-    return {show: false}
+    return {data: []}
   },
   componentDidMount: function() {
-    this.onCloseDetalhes();
+    document.addEventListener("backbutton", this.closeDetalhes, false);
     $('#modal').modal('show');
   },
-  handleConcluidoChange: function(status){
-    //todo
+  handleConcluidoChange: function(evento){
+    this.props.data.concluido = evento.target.checked;
   },
-  onCloseDetalhes: function(){
-    document.addEventListener("backbutton", function(){
-      this.closeDetalhes();
-    }, false);
+  handleSubmitChanges: function(){
+    this.props.submitChanges(this.props.data);
+    this.closeDetalhes();
   },
   closeDetalhes: function(){
+    this.setState({data: this.props.data})
     this.props.showDetalhes(false);
-    $('#modal').modal('hide');
   },
   render: function(){
     return (
@@ -37,11 +36,11 @@ var Detalhes = React.createClass({
                 {this.props.data.descricao}
               </div>
               <div className="col-xs-2">
-                <ItemConcluido status={this.props.data.concluido} onConcluidoChange={this.handleConcluidoChange} />
+                <input className="btn" type="checkbox" id="concluido" checked={status(this.props.data.concluido)} onClick={this.handleConcluidoChange} name="concluido" />
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" onClick={this.closeDetalhes} className="btn btn-primary">Salvar Alterações</button>
+              <button type="button" onClick={this.handleSubmitChanges} className="btn btn-primary">Salvar Alterações</button>
             </div>
           </div>
         </div>
@@ -50,9 +49,17 @@ var Detalhes = React.createClass({
   }
 });
 
+function status(concluido){
+  if ( concluido == '1' ){
+    return true;
+  }
+  return false;
+}
+
 var ItemConcluido = React.createClass({
   onConcluidoChange: function(event){
-    this.props.onConcluidoChange(event.target.checked);
+    event.preventDefault();
+    console.log(event.target.checked);
   },
   render: function(){
     var status;

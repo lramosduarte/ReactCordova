@@ -32469,7 +32469,10 @@
 	    }, false);
 	  },
 	  render: function () {
-	    return React.createElement(BoxTarefas, { url: 'http://10.0.0.105/teste/api/teste', intervalo: 500 });
+	    return(
+	      // <BoxTarefas url="http://10.0.0.105/teste/api/teste" intervalo={500} />
+	      React.createElement(BoxTarefas, { url: 'http://localhost:57594/api/teste', intervalo: 500 })
+	    );
 	  }
 	});
 
@@ -32616,19 +32619,6 @@
 	      }.bind(this)
 	    });
 	  },
-	  loadElementsSelect: function (elemento) {
-	    $.ajax({
-	      type: 'GET',
-	      dataType: 'json',
-	      url: this.props.url,
-	      success: function (data) {
-	        this.setState({ data: data });
-	      }.bind(this),
-	      error: function (xhr, status, err) {
-	        alert('Não foi possivel estabelecer conexão!\n');
-	      }.bind(this)
-	    });
-	  },
 	  handleTarefaSubmit: function (tarefa) {
 	    $.ajax({
 	      url: this.props.url,
@@ -32673,12 +32663,29 @@
 	      }.bind(this)
 	    });
 	  },
+	  handleChangeSubmit: function (tarefa) {
+	    $.ajax({
+	      type: 'PUT',
+	      dataType: 'json',
+	      url: this.props.url + '/' + tarefa.id,
+	      data: tarefa,
+	      success: function (data) {
+	        console.log(data);
+	      }.bind(this),
+	      error: function (xhr, status, err) {
+	        alert('Não foi possivel estabelecer conexão!\n');
+	      }.bind(this)
+	    });
+	  },
 	  handleSelectElement: function (indice) {
 	    var url = this.props.url + '/' + indice;
 	    this.setElementState(url);
 	  },
 	  toogleShowDetalhes: function (show) {
-	    this.setState({ showDetalhes: show });
+	    if (!show) {
+	      $('#modal').modal('hide');
+	      this.setState({ showDetalhes: show });
+	    }
 	  },
 	  getInitialState: function () {
 	    return { data: [], elemento: [], showDetalhes: false };
@@ -32707,7 +32714,7 @@
 	        { className: 'row' },
 	        React.createElement(ListaTarefas, { data: this.state.data, selectElmenet: this.handleSelectElement, removeItem: this.handleRemoveTarefa })
 	      ),
-	      this.state.showDetalhes ? React.createElement(Detalhes, { showDetalhes: this.toogleShowDetalhes, data: this.state.elemento }) : null
+	      this.state.showDetalhes ? React.createElement(Detalhes, { submitChanges: this.handleChangeSubmit, showDetalhes: this.toogleShowDetalhes, data: this.state.elemento }) : null
 	    );
 	  }
 	});
@@ -32726,23 +32733,22 @@
 	  displayName: 'Detalhes',
 
 	  getInitialState: function () {
-	    return { show: false };
+	    return { data: [] };
 	  },
 	  componentDidMount: function () {
-	    this.onCloseDetalhes();
+	    document.addEventListener("backbutton", this.closeDetalhes, false);
 	    $('#modal').modal('show');
 	  },
-	  handleConcluidoChange: function (status) {
-	    //todo
+	  handleConcluidoChange: function (evento) {
+	    this.props.data.concluido = evento.target.checked;
 	  },
-	  onCloseDetalhes: function () {
-	    document.addEventListener("backbutton", function () {
-	      this.closeDetalhes();
-	    }, false);
+	  handleSubmitChanges: function () {
+	    this.props.submitChanges(this.props.data);
+	    this.closeDetalhes();
 	  },
 	  closeDetalhes: function () {
+	    this.setState({ data: this.props.data });
 	    this.props.showDetalhes(false);
-	    $('#modal').modal('hide');
 	  },
 	  render: function () {
 	    return React.createElement(
@@ -32788,7 +32794,7 @@
 	            React.createElement(
 	              'div',
 	              { className: 'col-xs-2' },
-	              React.createElement(ItemConcluido, { status: this.props.data.concluido, onConcluidoChange: this.handleConcluidoChange })
+	              React.createElement('input', { className: 'btn', type: 'checkbox', id: 'concluido', checked: status(this.props.data.concluido), onClick: this.handleConcluidoChange, name: 'concluido' })
 	            )
 	          ),
 	          React.createElement(
@@ -32796,7 +32802,7 @@
 	            { className: 'modal-footer' },
 	            React.createElement(
 	              'button',
-	              { type: 'button', onClick: this.closeDetalhes, className: 'btn btn-primary' },
+	              { type: 'button', onClick: this.handleSubmitChanges, className: 'btn btn-primary' },
 	              'Salvar Alterações'
 	            )
 	          )
@@ -32806,11 +32812,19 @@
 	  }
 	});
 
+	function status(concluido) {
+	  if (concluido == '1') {
+	    return true;
+	  }
+	  return false;
+	}
+
 	var ItemConcluido = React.createClass({
 	  displayName: 'ItemConcluido',
 
 	  onConcluidoChange: function (event) {
-	    this.props.onConcluidoChange(event.target.checked);
+	    event.preventDefault();
+	    console.log(event.target.checked);
 	  },
 	  render: function () {
 	    var status;

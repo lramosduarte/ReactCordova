@@ -109,19 +109,6 @@ var BoxTarefas = React.createClass({
       }.bind(this)
     });
   },
-  loadElementsSelect: function(elemento){
-    $.ajax({
-      type: 'GET',
-      dataType: 'json',
-      url: this.props.url,
-      success: function(data){
-        this.setState({data: data})
-      }.bind(this),
-      error: function(xhr, status, err){
-        alert('Não foi possivel estabelecer conexão!\n');
-      }.bind(this)
-    })
-  },
   handleTarefaSubmit: function(tarefa){
     $.ajax({
       url: this.props.url,
@@ -166,12 +153,29 @@ var BoxTarefas = React.createClass({
       }.bind(this)
     });
   },
+  handleChangeSubmit: function(tarefa){
+    $.ajax({
+      type: 'PUT',
+      dataType: 'json',
+      url: this.props.url + '/' + tarefa.id,
+      data: tarefa,
+      success: function(data){
+        console.log(data);
+      }.bind(this),
+      error: function(xhr, status, err){
+        alert('Não foi possivel estabelecer conexão!\n');
+      }.bind(this)
+    });
+  },
   handleSelectElement: function(indice){
     var url = this.props.url + '/' + indice;
     this.setElementState(url);
   },
   toogleShowDetalhes: function(show){
-    this.setState({showDetalhes: show});
+    if(!show){
+      $('#modal').modal('hide');
+      this.setState({showDetalhes: show});
+    }
   },
   getInitialState: function(){
     return {data: [], elemento: [], showDetalhes: false};
@@ -190,7 +194,7 @@ var BoxTarefas = React.createClass({
         <div className="row">
           <ListaTarefas data={this.state.data} selectElmenet={this.handleSelectElement} removeItem={this.handleRemoveTarefa}/>
         </div>
-        { this.state.showDetalhes ? <Detalhes showDetalhes={this.toogleShowDetalhes} data={this.state.elemento} /> : null }
+        { this.state.showDetalhes ? <Detalhes submitChanges={this.handleChangeSubmit} showDetalhes={this.toogleShowDetalhes} data={this.state.elemento} /> : null }
       </div>
     );
   }
