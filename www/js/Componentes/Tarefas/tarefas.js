@@ -153,12 +153,28 @@ var BoxTarefas = React.createClass({
       }.bind(this)
     });
   },
+  setElementState: function(url){
+    $.ajax({
+      type: 'GET',
+      dataType: 'json',
+      url: url,
+      success: function(data){
+        this.setState({elemento: data, showDetalhes: true});
+      }.bind(this),
+      error: function(xhr, status, err){
+        alert('Não foi possivel estabelecer conexão!\n');
+      }.bind(this)
+    });
+  },
   handleSelectElement: function(indice){
     var url = this.props.url + '/' + indice;
-    ReactDOM.render(<Detalhes url={url}/>, document.getElementById('root'))
+    this.setElementState(url);
+  },
+  toogleShowDetalhes: function(show){
+    this.setState({showDetalhes: show});
   },
   getInitialState: function(){
-    return {data: [], elemento: []};
+    return {data: [], elemento: [], showDetalhes: false};
   },
   componentDidMount: function() {
     setInterval(this.loadCommentsFromServer, this.props.intervalo);
@@ -169,13 +185,12 @@ var BoxTarefas = React.createClass({
         <div className="row">
           <TarefasForm onTarefaSubmit={this.handleTarefaSubmit} />;
         </div>
-        <div>
-          <h1> Lista de tarefas </h1>
-          <hr/>
-          <div className="row">
-            <ListaTarefas data={this.state.data} selectElmenet={this.handleSelectElement} removeItem={this.handleRemoveTarefa}/>
-          </div>
+        <h1> Lista de tarefas </h1>
+        <hr/>
+        <div className="row">
+          <ListaTarefas data={this.state.data} selectElmenet={this.handleSelectElement} removeItem={this.handleRemoveTarefa}/>
         </div>
+        { this.state.showDetalhes ? <Detalhes showDetalhes={this.toogleShowDetalhes} data={this.state.elemento} /> : null }
       </div>
     );
   }

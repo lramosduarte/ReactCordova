@@ -3,39 +3,47 @@ var ReactDOM = require('react-dom');
 var $ = require("jquery");
 
 var Detalhes = React.createClass({
-  loadCommentsFromServer: function(){
-    $.ajax({
-      type: 'GET',
-      dataType: 'json',
-      url: this.props.url,
-      success: function(data){
-        this.setState({data: data})
-      }.bind(this),
-      error: function(xhr, status, err){
-        alert('Não foi possivel estabelecer conexão!\n');
-      }.bind(this)
-    })
-  },
   getInitialState: function(){
-    return {data: []}
+    return {show: false}
   },
   componentDidMount: function() {
-    this.loadCommentsFromServer();
+    this.onCloseDetalhes();
+    $('#modal').modal('show');
   },
   handleConcluidoChange: function(status){
-    console.log(status);
-    this.setState({concluido: !status});
+    //todo
+  },
+  onCloseDetalhes: function(){
+    document.addEventListener("backbutton", function(){
+      this.closeDetalhes();
+    }, false);
+  },
+  closeDetalhes: function(){
+    this.props.showDetalhes(false);
+    $('#modal').modal('hide');
   },
   render: function(){
     return (
-      <div className="container">
-        <div className="row">
-          <h1> Detalhes da tarefa </h1>
-          <hr />
-        </div>
-        <div className="row">
-          <h2> <span> {this.state.data.id} </span> - {this.state.data.descricao} </h2>
-          <ItemConcluido status={this.state.data.concluido} onConcluidoChange={this.handleConcluidoChange} />
+      <div id="modal" className="modal fade">
+        <div className="modal-dialog modal-lg">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1> Detalhes da tarefa </h1>
+              <hr />
+            </div>
+            <div className="modal-body">
+              <h3> Codigo - <span> {this.props.data.id} </span> </h3>
+              <div className="col-xs-7">
+                {this.props.data.descricao}
+              </div>
+              <div className="col-xs-2">
+                <ItemConcluido status={this.props.data.concluido} onConcluidoChange={this.handleConcluidoChange} />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" onClick={this.closeDetalhes} className="btn btn-primary">Salvar Alterações</button>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -44,7 +52,6 @@ var Detalhes = React.createClass({
 
 var ItemConcluido = React.createClass({
   onConcluidoChange: function(event){
-    console.log(event.target.checked);
     this.props.onConcluidoChange(event.target.checked);
   },
   render: function(){
