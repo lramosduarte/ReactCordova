@@ -38,6 +38,7 @@ var Detalhes = React.createClass({
               <div className="col-xs-2">
                 <input className="btn" type="checkbox" id="concluido" checked={status(this.props.data.concluido)} onClick={this.handleConcluidoChange} name="concluido" />
               </div>
+              { this.props.comentarios.length > 0 ? <ComentariosBox data={this.props.comentarios} /> : null }
             </div>
             <div className="modal-footer">
               <button type="button" onClick={this.handleSubmitChanges} className="btn btn-primary">Salvar Alterações</button>
@@ -49,34 +50,39 @@ var Detalhes = React.createClass({
   }
 });
 
+var ComentariosBox = React.createClass({
+  render: function(){
+    var comentarios = this.props.data.map(function(coment){
+      return (
+        <ItemComentario >
+          {coment.comentario1}
+        </ItemComentario>
+      );
+    });
+    return (
+      <div className="col-xs-10">
+        <h5> Lista de comentários </h5>
+        <ul>
+          {comentarios}
+        </ul>
+      </div>
+    );
+  }
+});
+
+var ItemComentario = React.createClass({
+  render: function(){
+    return (
+      <li> {this.props.children} </li>
+    );
+  }
+});
+
 function status(concluido){
   if ( concluido == '1' ){
     return true;
   }
   return false;
 }
-
-var ItemConcluido = React.createClass({
-  onConcluidoChange: function(event){
-    event.preventDefault();
-    console.log(event.target.checked);
-  },
-  render: function(){
-    var status;
-    switch (this.props.status) {
-      case '1':
-        status = true;
-        break;
-      default:
-        status = false;
-        break;
-    }
-    return (
-      <span className="col-xs-2">
-        <input className="btn" type="checkbox" id="concluido" name="concluido" checked={status} onChange={this.onConcluidoChange} />
-      </span>
-    );
-  }
-});
 
 module.exports = Detalhes;

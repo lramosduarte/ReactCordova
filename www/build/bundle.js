@@ -32657,9 +32657,23 @@
 	      url: url,
 	      success: function (data) {
 	        this.setState({ elemento: data, showDetalhes: true });
+	        this.setComentSelectedElement(data.id);
 	      }.bind(this),
 	      error: function (xhr, status, err) {
 	        alert('Não foi possivel estabelecer conexão!\n');
+	      }.bind(this)
+	    });
+	  },
+	  setComentSelectedElement: function (tarefa) {
+	    $.ajax({
+	      type: 'GET',
+	      dataType: 'json',
+	      url: this.props.url + '/tarefa/' + tarefa + '/comentarios',
+	      success: function (data) {
+	        this.setState({ comentarios: data });
+	      }.bind(this),
+	      error: function (xhr, status, err) {
+	        alert('Não foi possivel buscar os comentarios da tarefa selecionada');
 	      }.bind(this)
 	    });
 	  },
@@ -32669,9 +32683,7 @@
 	      dataType: 'json',
 	      url: this.props.url + '/' + tarefa.id,
 	      data: tarefa,
-	      success: function (data) {
-	        console.log(data);
-	      }.bind(this),
+	      success: function (data) {}.bind(this),
 	      error: function (xhr, status, err) {
 	        alert('Não foi possivel estabelecer conexão!\n');
 	      }.bind(this)
@@ -32688,7 +32700,7 @@
 	    }
 	  },
 	  getInitialState: function () {
-	    return { data: [], elemento: [], showDetalhes: false };
+	    return { data: [], elemento: [], comentarios: [], showDetalhes: false };
 	  },
 	  componentDidMount: function () {
 	    setInterval(this.loadCommentsFromServer, this.props.intervalo);
@@ -32714,7 +32726,7 @@
 	        { className: 'row' },
 	        React.createElement(ListaTarefas, { data: this.state.data, selectElmenet: this.handleSelectElement, removeItem: this.handleRemoveTarefa })
 	      ),
-	      this.state.showDetalhes ? React.createElement(Detalhes, { submitChanges: this.handleChangeSubmit, showDetalhes: this.toogleShowDetalhes, data: this.state.elemento }) : null
+	      this.state.showDetalhes ? React.createElement(Detalhes, { submitChanges: this.handleChangeSubmit, showDetalhes: this.toogleShowDetalhes, data: this.state.elemento, comentarios: this.state.comentarios }) : null
 	    );
 	  }
 	});
@@ -32795,7 +32807,8 @@
 	              'div',
 	              { className: 'col-xs-2' },
 	              React.createElement('input', { className: 'btn', type: 'checkbox', id: 'concluido', checked: status(this.props.data.concluido), onClick: this.handleConcluidoChange, name: 'concluido' })
-	            )
+	            ),
+	            this.props.comentarios.length > 0 ? React.createElement(ComentariosBox, { data: this.props.comentarios }) : null
 	          ),
 	          React.createElement(
 	            'div',
@@ -32812,37 +32825,54 @@
 	  }
 	});
 
+	var ComentariosBox = React.createClass({
+	  displayName: 'ComentariosBox',
+
+	  render: function () {
+	    var comentarios = this.props.data.map(function (coment) {
+	      return React.createElement(
+	        ItemComentario,
+	        null,
+	        coment.comentario1
+	      );
+	    });
+	    return React.createElement(
+	      'div',
+	      { className: 'col-xs-10' },
+	      React.createElement(
+	        'h5',
+	        null,
+	        ' Lista de comentários '
+	      ),
+	      React.createElement(
+	        'ul',
+	        null,
+	        comentarios
+	      )
+	    );
+	  }
+	});
+
+	var ItemComentario = React.createClass({
+	  displayName: 'ItemComentario',
+
+	  render: function () {
+	    return React.createElement(
+	      'li',
+	      null,
+	      ' ',
+	      this.props.children,
+	      ' '
+	    );
+	  }
+	});
+
 	function status(concluido) {
 	  if (concluido == '1') {
 	    return true;
 	  }
 	  return false;
 	}
-
-	var ItemConcluido = React.createClass({
-	  displayName: 'ItemConcluido',
-
-	  onConcluidoChange: function (event) {
-	    event.preventDefault();
-	    console.log(event.target.checked);
-	  },
-	  render: function () {
-	    var status;
-	    switch (this.props.status) {
-	      case '1':
-	        status = true;
-	        break;
-	      default:
-	        status = false;
-	        break;
-	    }
-	    return React.createElement(
-	      'span',
-	      { className: 'col-xs-2' },
-	      React.createElement('input', { className: 'btn', type: 'checkbox', id: 'concluido', name: 'concluido', checked: status, onChange: this.onConcluidoChange })
-	    );
-	  }
-	});
 
 	module.exports = Detalhes;
 

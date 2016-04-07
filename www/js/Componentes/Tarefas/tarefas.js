@@ -147,9 +147,23 @@ var BoxTarefas = React.createClass({
       url: url,
       success: function(data){
         this.setState({elemento: data, showDetalhes: true});
+        this.setComentSelectedElement(data.id);
       }.bind(this),
       error: function(xhr, status, err){
         alert('Não foi possivel estabelecer conexão!\n');
+      }.bind(this)
+    });
+  },
+  setComentSelectedElement: function(tarefa){
+    $.ajax({
+      type: 'GET',
+      dataType: 'json',
+      url: this.props.url + '/tarefa/' + tarefa + '/comentarios',
+      success: function(data){
+        this.setState({comentarios: data});
+      }.bind(this),
+      error: function(xhr, status, err){
+        alert('Não foi possivel buscar os comentarios da tarefa selecionada');
       }.bind(this)
     });
   },
@@ -160,7 +174,7 @@ var BoxTarefas = React.createClass({
       url: this.props.url + '/' + tarefa.id,
       data: tarefa,
       success: function(data){
-        console.log(data);
+
       }.bind(this),
       error: function(xhr, status, err){
         alert('Não foi possivel estabelecer conexão!\n');
@@ -178,7 +192,7 @@ var BoxTarefas = React.createClass({
     }
   },
   getInitialState: function(){
-    return {data: [], elemento: [], showDetalhes: false};
+    return {data: [], elemento: [], comentarios: [],showDetalhes: false};
   },
   componentDidMount: function() {
     setInterval(this.loadCommentsFromServer, this.props.intervalo);
@@ -194,7 +208,7 @@ var BoxTarefas = React.createClass({
         <div className="row">
           <ListaTarefas data={this.state.data} selectElmenet={this.handleSelectElement} removeItem={this.handleRemoveTarefa}/>
         </div>
-        { this.state.showDetalhes ? <Detalhes submitChanges={this.handleChangeSubmit} showDetalhes={this.toogleShowDetalhes} data={this.state.elemento} /> : null }
+        { this.state.showDetalhes ? <Detalhes submitChanges={this.handleChangeSubmit} showDetalhes={this.toogleShowDetalhes} data={this.state.elemento} comentarios={this.state.comentarios} /> : null }
       </div>
     );
   }
