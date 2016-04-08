@@ -32463,16 +32463,16 @@
 	  getInitialState: function () {
 	    return { data: [] };
 	  },
-	  componentDidMount: function () {
+	  componentWillMount: function () {
 	    document.addEventListener("deviceready", function () {
 	      alert('Iniciando app!');
 	    }, false);
 	  },
+	  componentDidMount: function () {},
 	  render: function () {
-	    return(
-	      // <BoxTarefas url="http://10.0.0.105/teste/api/teste" intervalo={500} />
-	      React.createElement(BoxTarefas, { url: 'http://localhost:57594/api/teste', intervalo: 500 })
-	    );
+	    return React.createElement(BoxTarefas, { url: 'http://10.0.0.105/teste/api/teste', intervalo: 500 })
+	    // <BoxTarefas url="http://localhost:57594/api/teste" intervalo={500} />
+	    ;
 	  }
 	});
 
@@ -32747,8 +32747,11 @@
 	  getInitialState: function () {
 	    return { data: [] };
 	  },
-	  componentDidMount: function () {
+	  componentWillMount: function () {
 	    document.addEventListener("backbutton", this.closeDetalhes, false);
+	  },
+	  componentWillReceiveProps: function (nextProps) {},
+	  componentDidMount: function () {
 	    $('#modal').modal('show');
 	  },
 	  handleConcluidoChange: function (evento) {

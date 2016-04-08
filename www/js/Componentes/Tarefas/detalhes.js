@@ -6,8 +6,13 @@ var Detalhes = React.createClass({
   getInitialState: function(){
     return {data: []}
   },
-  componentDidMount: function() {
+  componentWillMount: function(){
     document.addEventListener("backbutton", this.closeDetalhes, false);
+  },
+  componentWillReceiveProps: function(nextProps){
+
+  },
+  componentDidMount: function() {
     $('#modal').modal('show');
   },
   handleConcluidoChange: function(evento){
