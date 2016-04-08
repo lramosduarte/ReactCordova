@@ -45,14 +45,13 @@ var ItemConcluido = React.createClass({
     var status;
     switch (this.props.status) {
       case '1':
-        status = 'V';
+        status = 'col-xs-2 glyphicon glyphicon-ok-circle';
         break;
       default:
-        status = '';
+        status = 'col-xs-2';
     }
     return (
-      <span className="col-xs-2">
-        {status}
+      <span className={status}>
       </span>
     );
   }

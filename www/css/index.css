@@ -16,3 +16,18 @@
 .modal-footer{
   border-top: none!important;
 }
+.rodape{
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  height: 30px;
+  width: 100%;
+  text-align: center;
+}
+
+.conteudo{
+  display: block;
+  height: 577px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}

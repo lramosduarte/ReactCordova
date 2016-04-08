@@ -45,8 +45,13 @@ var Detalhes = React.createClass({
               </div>
               { this.props.comentarios.length > 0 ? <ComentariosBox data={this.props.comentarios} /> : null }
             </div>
-            <div className="modal-footer">
-              <button type="button" onClick={this.handleSubmitChanges} className="btn btn-primary">Salvar Alterações</button>
+            <div className="modal-footer" style={{clear: 'both'}}>
+              <button type="button" onClick={this.handleSubmitChanges} className="btn btn-default">
+                <span className="glyphicon glyphicon-ok" aria-hidden="true"></span>
+              </button>
+              <button type="button" onClick="" className="btn btn-default" disabled>
+                <span className="glyphicon glyphicon-plus" aria-hidden="true"></span>
+              </button>
             </div>
           </div>
         </div>
@@ -68,9 +73,7 @@ var ComentariosBox = React.createClass({
       <div className="col-xs-10">
         <h5> Lista de comentários </h5>
         <ul>
-          <ReactCSSTransitionGroup transitionName="ListaComents" transitionAppear={true} transitionEnterTimeout={500} transitionLeaveTimeout={300}>
-            {comentarios}
-          </ReactCSSTransitionGroup>
+          {comentarios}
         </ul>
       </div>
     );
@@ -78,9 +81,13 @@ var ComentariosBox = React.createClass({
 });
 
 var ItemComentario = React.createClass({
+  removeItem: function(evento){
+    console.log("remover item");
+    alert("remover item");
+  },
   render: function(){
     return (
-      <li> {this.props.children} </li>
+      <li> {this.props.children} <span onClick={this.removeItem} className="glyphicon glyphicon-minus" aria-hidden="true"></span> </li>
     );
   }
 });
