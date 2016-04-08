@@ -10,7 +10,7 @@ var Detalhes = React.createClass({
     document.addEventListener("backbutton", this.closeDetalhes, false);
   },
   componentWillReceiveProps: function(nextProps){
-
+    //TODO : dasdsadas
   },
   componentDidMount: function() {
     $('#modal').modal('show');
@@ -37,8 +37,8 @@ var Detalhes = React.createClass({
             </div>
             <div className="modal-body">
               <h3> Codigo - <span> {this.props.data.id} </span> </h3>
-              <div className="col-xs-7">
-                {this.props.data.descricao}
+              <div className="col-xs-10">
+                <input className="form-control" value={this.props.data.descricao} type="text" disabled />
               </div>
               <div className="col-xs-2">
                 <input className="btn" type="checkbox" id="concluido" checked={status(this.props.data.concluido)} onClick={this.handleConcluidoChange} name="concluido" />
@@ -68,7 +68,9 @@ var ComentariosBox = React.createClass({
       <div className="col-xs-10">
         <h5> Lista de comentários </h5>
         <ul>
-          {comentarios}
+          <ReactCSSTransitionGroup transitionName="ListaComents" transitionAppear={true} transitionEnterTimeout={500} transitionLeaveTimeout={300}>
+            {comentarios}
+          </ReactCSSTransitionGroup>
         </ul>
       </div>
     );

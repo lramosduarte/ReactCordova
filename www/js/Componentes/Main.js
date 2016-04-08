@@ -2,6 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var $ = require("jquery");
 
+
 var BoxTarefas = require('./Tarefas/tarefas.js');
 
 var Main = React.createClass({
@@ -10,7 +11,7 @@ var Main = React.createClass({
   },
   componentWillMount: function(){
     document.addEventListener("deviceready", function(){
-      alert('Iniciando app!');
+
     }, false);
   },
   componentDidMount: function(){

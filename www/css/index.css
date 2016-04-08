@@ -13,3 +13,6 @@
   min-height: 100%!important;
   border-radius: 0!important;
 }
+.modal-footer{
+  border-top: none!important;
+}

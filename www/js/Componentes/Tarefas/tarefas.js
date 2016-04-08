@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var $ = require("jquery");
+
 var Detalhes = require('./detalhes.js')
 
 var ListaTarefas = React.createClass({
@@ -201,7 +202,7 @@ var BoxTarefas = React.createClass({
     return (
       <div className="container">
         <div className="row">
-          <TarefasForm onTarefaSubmit={this.handleTarefaSubmit} />;
+          <TarefasForm onTarefaSubmit={this.handleTarefaSubmit} />
         </div>
         <h1> Lista de tarefas </h1>
         <hr/>
