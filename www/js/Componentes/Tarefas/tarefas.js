@@ -2,6 +2,8 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var $ = require("jquery");
 
+var ReactCSSTransitionGroup = require('react-addons-css-transition-group');
+
 var Detalhes = require('./detalhes.js')
 
 var ListaTarefas = React.createClass({
@@ -16,6 +18,12 @@ var ListaTarefas = React.createClass({
     let posIndice = index.indexOf('.', preIndice);
     let indice = index.substring(preIndice, posIndice);
     this.props.selectElmenet(indice);
+  },
+  componentWillMount: function(){
+    $('#loading').modal('show');
+  },
+  componentDidMount: function(){
+    $('#loading').modal('hide');
   },
   render: function(){
     var listaTarefas = this.props.data;

@@ -12798,9 +12798,11 @@
 	__webpack_require__(249);
 
 	var $ = __webpack_require__(83);
-	var Main = __webpack_require__(251);
+	var MainMenu = __webpack_require__(251);
 
-	ReactDOM.render(React.createElement(Main, null), document.getElementById('root'));
+	ReactDOM.render(React.createElement(MainMenu, { url: 'http://10.0.0.105/teste/api/teste' }), document.getElementById('root'));
+	// <BoxTarefas url="http://10.0.0.105/teste/api/teste" intervalo={500} />
+	// <BoxTarefas url="http://localhost:57594/api/teste" intervalo={500} />
 
 /***/ },
 /* 96 */
@@ -31781,21 +31783,61 @@
 	var $ = __webpack_require__(83);
 
 	var BoxTarefas = __webpack_require__(252);
+	var BoxUsuarios = __webpack_require__(254);
 
 	var Main = React.createClass({
 	  displayName: 'Main',
 
 	  getInitialState: function () {
-	    return { data: [] };
+	    return { show: "" };
 	  },
 	  componentWillMount: function () {
-	    document.addEventListener("deviceready", function () {}, false);
+	    document.addEventListener("deviceready", function () {
+	      //todo splashscreen
+	    }, false);
 	  },
-	  componentDidMount: function () {},
+	  componentDidMount: function () {
+	    console.log(this.state.show);
+	  },
+	  handleShowTarefas: function () {
+	    this.setState({ show: "TAREFAS" });
+	  },
+	  handleShowUsuarios: function () {
+	    this.setState({ show: "USUARIOS" });
+	  },
 	  render: function () {
-	    return React.createElement(BoxTarefas, { url: 'http://10.0.0.105/teste/api/teste', intervalo: 500 })
-	    // <BoxTarefas url="http://localhost:57594/api/teste" intervalo={500} />
-	    ;
+	    return React.createElement(
+	      'div',
+	      { className: 'container' },
+	      React.createElement(
+	        'div',
+	        { className: 'row conteudo' },
+	        this.state.show == "TAREFAS" ? React.createElement(BoxTarefas, { url: this.props.url, intervalo: 500 }) : null,
+	        this.state.show == "USUARIOS" ? React.createElement(BoxUsuarios, { url: this.props.url }) : null
+	      ),
+	      React.createElement(
+	        'div',
+	        { className: 'row rodape' },
+	        React.createElement(
+	          'div',
+	          { className: 'col-xs-6' },
+	          React.createElement(
+	            'button',
+	            { className: 'btn btn-default', onClick: this.handleShowTarefas },
+	            'Tarefas'
+	          )
+	        ),
+	        React.createElement(
+	          'div',
+	          { className: 'col-xs-6' },
+	          React.createElement(
+	            'button',
+	            { className: 'btn btn-default', onClick: this.handleShowUsuarios },
+	            'Usuários'
+	          )
+	        )
+	      )
+	    );
 	  }
 	});
 
@@ -31864,16 +31906,12 @@
 	    var status;
 	    switch (this.props.status) {
 	      case '1':
-	        status = 'V';
+	        status = 'col-xs-2 glyphicon glyphicon-ok-circle';
 	        break;
 	      default:
-	        status = '';
+	        status = 'col-xs-2';
 	    }
-	    return React.createElement(
-	      'span',
-	      { className: 'col-xs-2' },
-	      status
-	    );
+	    return React.createElement('span', { className: status });
 	  }
 	});
 
@@ -32140,11 +32178,16 @@
 	          ),
 	          React.createElement(
 	            'div',
-	            { className: 'modal-footer' },
+	            { className: 'modal-footer', style: { clear: 'both' } },
 	            React.createElement(
 	              'button',
-	              { type: 'button', onClick: this.handleSubmitChanges, className: 'btn btn-primary' },
-	              'Salvar Alterações'
+	              { type: 'button', onClick: this.handleSubmitChanges, className: 'btn btn-default' },
+	              React.createElement('span', { className: 'glyphicon glyphicon-ok', 'aria-hidden': 'true' })
+	            ),
+	            React.createElement(
+	              'button',
+	              { type: 'button', onClick: '', className: 'btn btn-default', disabled: true },
+	              React.createElement('span', { className: 'glyphicon glyphicon-plus', 'aria-hidden': 'true' })
 	            )
 	          )
 	        )
@@ -32175,11 +32218,7 @@
 	      React.createElement(
 	        'ul',
 	        null,
-	        React.createElement(
-	          ReactCSSTransitionGroup,
-	          { transitionName: 'ListaComents', transitionAppear: true, transitionEnterTimeout: 500, transitionLeaveTimeout: 300 },
-	          comentarios
-	        )
+	        comentarios
 	      )
 	    );
 	  }
@@ -32188,12 +32227,18 @@
 	var ItemComentario = React.createClass({
 	  displayName: 'ItemComentario',
 
+	  removeItem: function (evento) {
+	    console.log("remover item");
+	    alert("remover item");
+	  },
 	  render: function () {
 	    return React.createElement(
 	      'li',
 	      null,
 	      ' ',
 	      this.props.children,
+	      ' ',
+	      React.createElement('span', { onClick: this.removeItem, className: 'glyphicon glyphicon-minus', 'aria-hidden': 'true' }),
 	      ' '
 	    );
 	  }
@@ -32207,6 +32252,85 @@
 	}
 
 	module.exports = Detalhes;
+
+/***/ },
+/* 254 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(96);
+	var ReactDOM = __webpack_require__(248);
+	var $ = __webpack_require__(83);
+
+	var BoxUsuarios = React.createClass({
+	  displayName: 'BoxUsuarios',
+
+	  loadCommentsFromServer: function () {
+	    $.ajax({
+	      type: 'GET',
+	      dataType: 'json',
+	      url: this.props.url + '/usuarios',
+	      success: function (usuarios) {
+	        this.setState({ data: usuarios });
+	      }.bind(this),
+	      error: function (xhr, status, err) {
+	        alert('Erro ao recuperar lista de usuarios!\n');
+	      }.bind(this)
+	    });
+	  },
+	  getInitialState: function () {
+	    return { data: [] };
+	  },
+	  componentDidMount: function () {
+	    this.loadCommentsFromServer();
+	  },
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      { className: 'row' },
+	      React.createElement(
+	        'div',
+	        null,
+	        React.createElement(ListaUsuarios, { data: this.state.data })
+	      )
+	    );
+	  }
+	});
+
+	var ListaUsuarios = React.createClass({
+	  displayName: 'ListaUsuarios',
+
+	  render: function () {
+	    var usuarios = this.props.data.map(function (usuario) {
+	      return React.createElement(
+	        Usuario,
+	        { key: usuario.i_unique },
+	        usuario.st_nome
+	      );
+	    });
+	    return React.createElement(
+	      'ul',
+	      null,
+	      ' ',
+	      usuarios,
+	      ' '
+	    );
+	  }
+	});
+
+	var Usuario = React.createClass({
+	  displayName: 'Usuario',
+
+	  render: function () {
+	    return React.createElement(
+	      'li',
+	      null,
+	      ' ',
+	      this.props.children,
+	      ' '
+	    );
+	  }
+	});
+	module.exports = BoxUsuarios;
 
 /***/ }
 /******/ ]);

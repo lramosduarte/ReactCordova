@@ -2,7 +2,6 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var $ = require("jquery");
 
-
 var BoxTarefas = require('./Tarefas/tarefas.js');
 var BoxUsuarios = require('./usuarios/usuarios.js');
 
@@ -11,12 +10,13 @@ var Main = React.createClass({
     return {show: ""};
   },
   componentWillMount: function(){
+    $('#loading').modal('show');
     document.addEventListener("deviceready", function(){
-
+      //todo splashscreen
     }, false);
   },
   componentDidMount: function(){
-    console.log(this.state.show);
+    $('#loading').modal('hide');
   },
   handleShowTarefas: function(){
     this.setState({show: "TAREFAS"});

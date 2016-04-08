@@ -19,8 +19,12 @@ var BoxUsuarios = React.createClass({
   getInitialState: function(){
     return {data: []};
   },
+  componentWillMount: function(){
+    $('#loading').modal('show');
+  },
   componentDidMount: function(){
     this.loadCommentsFromServer();
+    $('#loading').modal('hide');
   },
   render: function(){
     return (
